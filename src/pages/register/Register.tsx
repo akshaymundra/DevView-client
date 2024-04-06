@@ -3,15 +3,19 @@ import SearchSelect from '@/components/common/inputFields/SearchSelect';
 import StyledInput from '@/components/common/inputFields/StyledInput';
 import StyledSelect from '@/components/common/inputFields/StyledSelect';
 import { experienceLevels } from '@/lib/constants';
+import { HttpService } from '@/services';
 import { IModel } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Register: React.FC = () => {
 
+    const http = new HttpService();
     const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const {
         register,
@@ -21,8 +25,19 @@ const Register: React.FC = () => {
         setError,
     } = useForm<IModel.RegisterData>({ resolver: zodResolver(IModel.RegisterSchema) });
 
-    const onSubmit = (data: IModel.RegisterData) => {
-        console.log(data);
+    const onSubmit = async (data: IModel.RegisterData) => {
+        try {
+            setLoading(true);
+            const response = await http.service(true).push<any, IModel.RegisterData>('/register', data);
+            if (response.success) {
+                navigate('/');
+            } else {
+            }
+        } catch (error) {
+            // console.log(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -104,8 +119,9 @@ const Register: React.FC = () => {
                             <Button
                                 type='submit'
                                 varient='primary'
+                                disabled={loading}
                             >
-                                Sign up
+                                {loading ? 'loading...' : 'Sign up'}
                             </Button>
                         </div>
                     </form>

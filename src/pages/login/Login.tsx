@@ -1,16 +1,19 @@
 import Button from '@/components/common/buttons/Button';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import StyledInput from '@/components/common/inputFields/StyledInput';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IModel } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HttpService } from '@/services';
+import Cookies from 'js-cookie';
 
 
 const Login: React.FC = () => {
     const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(false);
     const http = new HttpService();
+    const navigate = useNavigate();
 
     const { register,
         handleSubmit,
@@ -20,8 +23,20 @@ const Login: React.FC = () => {
 
 
     const onSubmit = async (data: IModel.LoginData) => {
-        const response = await http.service().push<any, IModel.LoginData>('/login', data);
-        console.log(response);
+        try {
+            setLoading(true);
+            const response = await http.service(true).push<any, IModel.LoginData>('/login', data);
+            if (response.success) {
+                const expiresInDays = Number(response.expiresIn.replace('d', ''));
+                Cookies.set('accessToken', response.token, { expires: expiresInDays, sameSite: 'lax' });
+                navigate('/');
+            }
+        } catch (error) {
+            // console.log(error)
+        } finally {
+            setLoading(false);
+        }
+
     }
 
     return (
@@ -77,7 +92,7 @@ const Login: React.FC = () => {
                                 type='submit'
                                 varient='primary'
                             >
-                                Sign in
+                                {loading ? "Loading..." : 'Sign in'}
                             </Button>
                         </div>
                     </form>

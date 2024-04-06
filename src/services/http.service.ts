@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 import { IService, EHttpMethod } from "@/types";
 import nProgress from "nprogress";
+import toast from "react-hot-toast";
 
 
 class HttpService {
@@ -23,8 +24,10 @@ class HttpService {
     }
 
     // initial service configuration
-    public service() {
-        this.injectInterceptors();
+    public service(
+        showAlert = false
+    ) {
+        this.injectInterceptors(showAlert);
         return this;
     }
 
@@ -108,7 +111,7 @@ class HttpService {
     }
 
     // Inject interceptors for request and response
-    private injectInterceptors() {
+    private injectInterceptors(showAlert: boolean) {
         // Set up request interceptor
         this.http.interceptors.request.use((request) => {
             // * Perform an action
@@ -120,10 +123,18 @@ class HttpService {
         this.http.interceptors.response.use(
             (response) => {
                 nProgress.done();
+
+                if (showAlert) {
+                    toast.success("");
+                }
+
                 return response;
             },
 
             (error) => {
+                if (showAlert) {
+                    toast.error(error.response.data.message);
+                }
                 nProgress.done();
                 return Promise.reject(error);
             }
