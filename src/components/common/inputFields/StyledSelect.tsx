@@ -1,14 +1,14 @@
-import { FormFieldProps, objValLabel } from '@/types/commonTypes'
+import { IModel } from '@/types';
 import React from 'react'
 
 
 
-interface StyledSelectProps extends React.InputHTMLAttributes<HTMLSelectElement>, FormFieldProps {
+interface StyledSelectProps extends React.InputHTMLAttributes<HTMLSelectElement>, IModel.FormFieldProps {
     label?: string,
     name: string,
     valueAsNumber?: boolean,
     id?: string,
-    options: objValLabel[];
+    options: IModel.objValLabel[];
 }
 
 const StyledSelect: React.FC<StyledSelectProps> = ({

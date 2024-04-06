@@ -1,7 +1,7 @@
-import { FormFieldProps } from '@/types/commonTypes'
+import { IModel } from '@/types'
 import React from 'react'
 
-interface StyledInputProps extends React.InputHTMLAttributes<HTMLInputElement>, FormFieldProps {
+interface StyledInputProps extends React.InputHTMLAttributes<HTMLInputElement>, IModel.FormFieldProps {
   label?: string,
   startText?: string,
   className?: string,

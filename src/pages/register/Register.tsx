@@ -1,8 +1,9 @@
 import Button from '@/components/common/buttons/Button'
+import SearchSelect from '@/components/common/inputFields/SearchSelect';
 import StyledInput from '@/components/common/inputFields/StyledInput';
 import StyledSelect from '@/components/common/inputFields/StyledSelect';
 import { experienceLevels } from '@/lib/constants';
-import { RegisterData, RegisterSchema } from '@/types/RegisterTypes';
+import { IModel } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
@@ -16,10 +17,11 @@ const Register: React.FC = () => {
         register,
         handleSubmit,
         formState: { errors },
+        control,
         setError,
-    } = useForm<RegisterData>({ resolver: zodResolver(RegisterSchema) });
+    } = useForm<IModel.RegisterData>({ resolver: zodResolver(IModel.RegisterSchema) });
 
-    const onSubmit = (data: RegisterData) => {
+    const onSubmit = (data: IModel.RegisterData) => {
         console.log(data);
     }
 
@@ -67,6 +69,15 @@ const Register: React.FC = () => {
                             error={errors.experienceLevel}
                             options={experienceLevels}
                             required
+                        />
+
+                        <SearchSelect
+                            id='select-skills'
+                            label='Skills'
+                            name='skills'
+                            options={experienceLevels}
+                            error={errors.skills}
+                            control={control}
                         />
 
                         <StyledInput

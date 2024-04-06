@@ -1,25 +1,27 @@
 import Button from '@/components/common/buttons/Button';
 import { Link } from 'react-router-dom'
 import StyledInput from '@/components/common/inputFields/StyledInput';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { LoginData, LoginSchema } from '@/types/loginTypes';
+import { IModel } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { HttpService } from '@/services';
 
 
 const Login: React.FC = () => {
     const [show, setShow] = useState(false);
+    const http = new HttpService();
 
     const { register,
         handleSubmit,
         formState: { errors },
         setError
-    } = useForm<LoginData>({ resolver: zodResolver(LoginSchema) });
+    } = useForm<IModel.LoginData>({ resolver: zodResolver(IModel.LoginSchema) });
 
 
-
-    const onSubmit = (data: LoginData) => {
-        console.log(data);
+    const onSubmit = async (data: IModel.LoginData) => {
+        const response = await http.service().push<any, IModel.LoginData>('/login', data);
+        console.log(response);
     }
 
     return (
