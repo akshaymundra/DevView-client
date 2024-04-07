@@ -1,12 +1,14 @@
 import Button from '@/components/common/buttons/Button';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import StyledInput from '@/components/common/inputFields/StyledInput';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IModel } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HttpService } from '@/services';
-import Cookies from 'js-cookie';
+import { setAuthToken } from '@/lib/utils';
+import { useAuthContext } from '@/hooks/useAuthContext';
+import Loading from '@/components/common/loading/Loading';
 
 
 const Login: React.FC = () => {
@@ -14,6 +16,9 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const http = new HttpService();
     const navigate = useNavigate();
+    const { user, dispatch, loading: userLoading } = useAuthContext();
+    const location = useLocation();
+    const { from } = location.state || { from: { pathname: '/' } }
 
     const { register,
         handleSubmit,
@@ -27,9 +32,11 @@ const Login: React.FC = () => {
             setLoading(true);
             const response = await http.service(true).push<any, IModel.LoginData>('/login', data);
             if (response.success) {
-                const expiresInDays = Number(response.expiresIn.replace('d', ''));
-                Cookies.set('accessToken', response.token, { expires: expiresInDays, sameSite: 'lax' });
-                navigate('/');
+                setAuthToken(response.token, response.expiresIn);
+
+                dispatch({ type: 'LOGIN', payload: response.user });
+
+                navigate('/', { replace: true })
             }
         } catch (error) {
             // console.log(error)
@@ -37,6 +44,11 @@ const Login: React.FC = () => {
             setLoading(false);
         }
 
+    }
+
+    if (userLoading) return <Loading />
+    if (user) {
+        return <Navigate to={from} />
     }
 
     return (

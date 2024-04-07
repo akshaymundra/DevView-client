@@ -1,22 +1,25 @@
+import { lazy } from 'react'
 import { Routes as Switch, Route } from 'react-router-dom'
-import Home from './pages/home/Home'
-import Login from './pages/login/Login'
-import Register from './pages/register/Register'
-import { AuthProvider } from './hooks/useAuth'
-import ProtectedLayout from './components/layout/protectedLayout/ProtectedLayout'
+import { AuthContextProvider } from './context/AuthContext'
+
+const Home = lazy(() => import('./pages/home/Home'))
+const Login = lazy(() => import('./pages/login/Login'))
+const Register = lazy(() => import('./pages/register/Register'))
+const ProtectedLayout = lazy(() => import('./components/layout/protectedLayout/ProtectedLayout'))
+const Room = lazy(() => import('./pages/room/Room'))
 
 const Routes = () => {
     return (
-        <AuthProvider>
+        <AuthContextProvider>
             <Switch>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path='/' element={<ProtectedLayout />}>
-                    <Route path="/" index element={<Home />} />
-                    <Route path="/pro" element={<Home />} />
+                    <Route index element={<Home />} />
+                    <Route path='room/:roomId' element={<Room />} />
                 </Route>
             </Switch>
-        </AuthProvider>
+        </AuthContextProvider>
     )
 }
 

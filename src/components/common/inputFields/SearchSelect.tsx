@@ -35,6 +35,7 @@ const SearchSelect: React.FC<SearchSelectProps> = ({
                     <Select
                         {...field}
                         options={options}
+                        closeMenuOnSelect={false}
                         id={id}
                         isMulti
                         {...props}

@@ -1,13 +1,17 @@
-import { useAuth } from "@/hooks/useAuth";
-import { Outlet, useNavigate } from "react-router-dom";
+// import { useAuth } from "@/hooks/useAuth";
+import Loading from "@/components/common/loading/Loading";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const ProtectedLayout = () => {
 
-    const { user } = useAuth();
-    const navigate = useNavigate();
+    const { user, loading } = useAuthContext();
+    const location = useLocation();
+
+    if (loading) return <Loading />
 
     if (!user) {
-        navigate('/login');
+        return <Navigate to={'/login'} state={{ from: location }} replace />
     }
 
     return (

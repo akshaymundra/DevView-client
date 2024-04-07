@@ -2,7 +2,7 @@ import Button from '@/components/common/buttons/Button'
 import SearchSelect from '@/components/common/inputFields/SearchSelect';
 import StyledInput from '@/components/common/inputFields/StyledInput';
 import StyledSelect from '@/components/common/inputFields/StyledSelect';
-import { experienceLevels } from '@/lib/constants';
+import { developerSkills, experienceLevels } from '@/lib/constants';
 import { HttpService } from '@/services';
 import { IModel } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -90,7 +90,7 @@ const Register: React.FC = () => {
                             id='select-skills'
                             label='Skills'
                             name='skills'
-                            options={experienceLevels}
+                            options={developerSkills}
                             error={errors.skills}
                             control={control}
                         />
