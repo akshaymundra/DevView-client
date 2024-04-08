@@ -28,7 +28,7 @@ const StyledInput: React.FC<StyledInputProps> = ({
   ...props
 }) => {
   return (
-    <div>
+    <div className='text-start'>
       {label &&
         <label htmlFor={id ? id : `${label}`} className="block text-sm font-medium leading-6 text-gray-900">
           {label}

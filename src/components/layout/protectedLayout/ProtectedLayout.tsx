@@ -1,11 +1,12 @@
 // import { useAuth } from "@/hooks/useAuth";
+import Button from "@/components/common/buttons/Button";
 import Loading from "@/components/common/loading/Loading";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const ProtectedLayout = () => {
 
-    const { user, loading } = useAuthContext();
+    const { user, loading, dispatch } = useAuthContext();
     const location = useLocation();
 
     if (loading) return <Loading />
@@ -16,8 +17,13 @@ const ProtectedLayout = () => {
 
     return (
         <div className="min-h-screen text-center">
-            <div className="">
-                nav bar will be here
+            <div className="mb-5">
+                <Button
+                    varient="primary"
+                    onClick={() => dispatch({ type: 'LOGOUT' })}
+                >
+                    Logout
+                </Button>
             </div>
             <Outlet />
         </div>

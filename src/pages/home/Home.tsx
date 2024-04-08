@@ -1,24 +1,32 @@
-import Button from "@/components/common/buttons/Button"
-import { useAuthContext } from "@/hooks/useAuthContext"
-import { Link } from "react-router-dom";
-
+import RequestCard from "@/components/home/requestCard/RequestCard";
+import { useSocket } from "@/context/SocketContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { IModel } from "@/types";
+import { useEffect, useState } from "react";
 
 const Home = () => {
 
-    const { dispatch } = useAuthContext();
+    const socket = useSocket();
+    const [requestDataList, setRequestDataList] = useState<IModel.interviewRequestInterface[]>([]);
+    const { user } = useAuthContext();
+
+    useEffect(() => {
+        socket?.on('interview-request', data => {
+            console.log(data);
+            if (data.success && user?._id !== data.interviewReq.requester) {
+                setRequestDataList([data.interviewReq, ...requestDataList]);
+            }
+        });
+    }, [socket]);
 
     return (
         <div className="text-sky-600 text-2xl">
-            <Button
-                varient="warning"
-                onClick={() => dispatch({ type: 'LOGOUT' })}
-            >
-                Logout
-            </Button>
 
-            <Link to={'room/id'}>
-                Go to room id
-            </Link>
+            <div className={`flex flex-col gap-2`}>
+                {requestDataList.map((data, index) => (
+                    <RequestCard key={index} data={data} />
+                ))}
+            </div>
 
         </div>
     )

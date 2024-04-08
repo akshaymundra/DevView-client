@@ -37,3 +37,22 @@ export const RegisterSchema = z.object({
 export type RegisterData = z.infer<typeof RegisterSchema>;
 
 
+export const InterviewRequestSchema = z.object({
+    topic: z.string().min(3, { message: "Topic is too short" }),
+    description: z.string().min(10, { message: "Description is too short" }),
+});
+export type InterviewRequestData = z.infer<typeof InterviewRequestSchema>;
+
+
+export interface interviewRequestInterface {
+    _id: string,
+    requester: string,
+    responder: string,
+    topic: string,
+    description: string,
+    status: string,
+    requestedTime: string,
+    room: string,
+    createdAt: string,
+    updatedAt: string
+}

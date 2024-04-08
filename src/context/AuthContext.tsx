@@ -1,7 +1,7 @@
 import { removeAuthToken } from "@/lib/utils";
 import { HttpService } from "@/services";
 import { createContext, useReducer, Dispatch, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 
 
 type ActionType = {
@@ -38,7 +38,7 @@ export const authReducer = (state: any, action: any) => {
 export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     const http = new HttpService();
-    const location = useLocation();
+    // const location = useLocation();
     const [state, dispatch] = useReducer(authReducer, {
         user: null,
         loading: false,
