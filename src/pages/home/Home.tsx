@@ -3,6 +3,7 @@ import { useSocket } from "@/context/SocketContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { IModel } from "@/types";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
 
@@ -27,6 +28,8 @@ const Home = () => {
                     <RequestCard key={index} data={data} />
                 ))}
             </div>
+
+            <Link to={'request-interview'}>Request interview</Link>
 
         </div>
     )
