@@ -16,4 +16,15 @@ export const setAuthToken = (token: string, expiresIn: string) => {
  */
 export const removeAuthToken = () => {
     Cookies.remove('accessToken');
-}   
+}
+
+
+export const getSkillString = (skills: { label: string, value: string }[]): string => {
+    let str = "";
+    skills.forEach((skill, index) => {
+        if (index === skills.length - 1) {
+            str += skill.label;
+        } else str += skill.label + ", ";
+    });
+    return str;
+}

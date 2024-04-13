@@ -46,26 +46,12 @@ const Room = () => {
     }
 
     return (
-        <div>
-            <div>Room</div>
 
-            {hasJoined
-                ?
-                <div>
-                    someone joind the room
-                </div>
-                :
-                <div>
-                    waiting for someone to accept the interview request.
-                </div>
-            }
+        <RoomPeerManage
+            roomId={roomId}
+            hasJoined={hasJoined}
+        />
 
-            <RoomPeerManage
-                roomId={roomId}
-                hasJoined={hasJoined}
-            />
-
-        </div>
     )
 }
 

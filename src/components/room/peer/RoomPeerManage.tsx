@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import Style from "./RoomPeerManage.module.css";
 import Peer, { MediaConnection } from 'peerjs';
 import { useSocket } from "@/context/SocketContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
+import { MdCallEnd } from "react-icons/md";
+import Button from "@/components/common/buttons/Button";
 
 
 interface RoomPeerManageProps {
@@ -87,21 +90,22 @@ const RoomPeerManage: React.FC<RoomPeerManageProps> = ({
             });
         });
 
-        socket?.on('room:peer-disconnect', () => {
-            if (remoteVideoRef.current?.srcObject) {
-                let stream = remoteVideoRef.current.srcObject as MediaStream;
-                let tracks = stream.getTracks();
-                tracks.map(track => track.stop());
-                remoteVideoRef.current.srcObject = null;
-            }
-            if (currentUserVideoRef.current?.srcObject) {
-                let stream = currentUserVideoRef.current.srcObject as MediaStream;
-                let tracks = stream.getTracks();
-                tracks.map(track => track.stop());
-                currentUserVideoRef.current.srcObject = null;
-            }
-            navigate('/');
-        })
+        socket?.on('room:peer-disconnect', () => handleCallEnd(true));
+        // socket?.on('room:peer-disconnect', () => {
+        //     if (remoteVideoRef.current?.srcObject) {
+        //         let stream = remoteVideoRef.current.srcObject as MediaStream;
+        //         let tracks = stream.getTracks();
+        //         tracks.map(track => track.stop());
+        //         remoteVideoRef.current.srcObject = null;
+        //     }
+        //     if (currentUserVideoRef.current?.srcObject) {
+        //         let stream = currentUserVideoRef.current.srcObject as MediaStream;
+        //         let tracks = stream.getTracks();
+        //         tracks.map(track => track.stop());
+        //         currentUserVideoRef.current.srcObject = null;
+        //     }
+        //     navigate('/');
+        // })
 
     }, [socket]);
 
@@ -118,7 +122,7 @@ const RoomPeerManage: React.FC<RoomPeerManageProps> = ({
     }, [peerId, hasJoined, remotePeerIdValue]);
 
     // end the call and clean up the resources
-    const handleCallEnd = () => {
+    const handleCallEnd = (onRemote = false) => {
         if (currentCall) {
             currentCall.close();
             setCurrentCall(null);
@@ -142,34 +146,43 @@ const RoomPeerManage: React.FC<RoomPeerManageProps> = ({
             tracks.forEach((track) => track.stop());
             remoteVideoRef.current.srcObject = null;
         }
-
-        socket?.emit('room:peer-disconnect', { roomId, peerId });
-
+        if (!onRemote) {
+            socket?.emit('room:peer-disconnect', { roomId, peerId });
+        }
         navigate('/');
-
+        window.location.reload();
     };
 
 
     return (
-        <div className="">
-            <h1>Current user id is {peerId}</h1>
-            <div className="flex gap-2">
-                <div>
-                    you
-                    <video height={100} width={200} ref={currentUserVideoRef} />
+        <div className={`${Style.container}`}>
+            <div className={`h-full w-full p-4`} >
+                <div className={`${Style.video_container} relative`}>
+
+                    <div className={`absolute bottom-0 right-0 rounded-lg`}>
+                        <video className={`${Style.my_video}`} ref={currentUserVideoRef} />
+                    </div>
+
+                    {hasJoined ?
+                        <video className={`${Style.remote_video}`} ref={remoteVideoRef} />
+                        :
+                        <p
+                            className={`text-center text-white text-lg`}
+                        >Waiting for someone to join...</p>
+                    }
                 </div>
-                <div>
-                    remote video
-                    <video height={100} width={200} ref={remoteVideoRef} />
+                <div className={`${Style.actions_container}`}>
+                    <Button
+                        onClick={() => handleCallEnd(false)}
+                        varient="danger"
+                        roundedFull
+                        iconButton
+                    >
+                        <MdCallEnd style={{ color: "white", fontSize: '1.2rem' }} />
+                    </Button>
                 </div>
             </div>
-            {currentCall &&
-                <button
-                    onClick={handleCallEnd}
-                >
-                    End Call
-                </button>
-            }
+
         </div>
     );
 };

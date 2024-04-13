@@ -1,0 +1,55 @@
+.container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 30;
+}
+
+.my_video {
+    height: 100px;
+    width: 200px;
+    border-radius: 20%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.video_container {
+    height: 90%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.remote_video {
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.actions_container {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+
+@media screen and (max-width: 640px) {
+    .my_video {
+        height: 100px;
+        width: 75px;
+    }
+
+    .video_container {
+        height: 93%;
+    }
+
+    .remote_video {
+        object-fit: cover;
+    }
+
+}

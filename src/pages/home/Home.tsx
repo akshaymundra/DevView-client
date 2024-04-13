@@ -3,25 +3,29 @@ import { useSocket } from "@/context/SocketContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { IModel } from "@/types";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 const Home = () => {
 
     const socket = useSocket();
     const [requestDataList, setRequestDataList] = useState<IModel.interviewRequestInterface[]>([]);
-    const { user } = useAuthContext();
+    const { user, dispatch } = useAuthContext();
 
     useEffect(() => {
         socket?.on('interview-request', data => {
             console.log(data);
             if (data.success && user?._id !== data.interviewReq.requester) {
-                setRequestDataList([data.interviewReq, ...requestDataList]);
+                setRequestDataList([data, ...requestDataList]);
             }
+        });
+
+        socket?.on('room:clear-interview', data => {
+            // console.log(data);
+            setRequestDataList(requestDataList.filter(req => req.room !== data.roomId));
         });
     }, [socket]);
 
     return (
-        <div className="text-sky-600 text-2xl">
+        <div className="">
 
             <div className={`flex flex-col gap-2`}>
                 {requestDataList.map((data, index) => (
@@ -29,7 +33,12 @@ const Home = () => {
                 ))}
             </div>
 
-            <Link to={'request-interview'}>Request interview</Link>
+            <br />
+            <button
+                onClick={() => dispatch({ type: "LOGOUT" })}
+            >
+                logout
+            </button>
 
         </div>
     )

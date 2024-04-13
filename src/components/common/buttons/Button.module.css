@@ -1,5 +1,9 @@
+.base_btn {
+    @apply flex gap-2 items-center w-full justify-center rounded-md
+}
+
 .btn {
-    @apply flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+    @apply px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
 }
 
 .primary {
@@ -36,4 +40,16 @@
 
 .link {
     @apply bg-transparent focus-visible:outline-transparent text-indigo-600 hover:text-indigo-800;
+}
+
+.rounded_pill {
+    border-radius: 50px;
+}
+
+.icon_button {
+    @apply p-1.5
+}
+
+.rounded_full {
+    border-radius: 50%;
 }

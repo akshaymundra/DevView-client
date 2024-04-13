@@ -3,10 +3,12 @@ import Button from "@/components/common/buttons/Button";
 import Loading from "@/components/common/loading/Loading";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import Navbar from "../navbar/Navbar";
+import Sidebar from "../sidebar/Sidebar";
 
 const ProtectedLayout = () => {
 
-    const { user, loading, dispatch } = useAuthContext();
+    const { user, loading } = useAuthContext();
     const location = useLocation();
 
     if (loading) return <Loading />
@@ -16,16 +18,16 @@ const ProtectedLayout = () => {
     }
 
     return (
-        <div className="min-h-screen text-center">
-            <div className="mb-5">
-                <Button
-                    varient="primary"
-                    onClick={() => dispatch({ type: 'LOGOUT' })}
-                >
-                    Logout
-                </Button>
+        <div className="min-h-full flex flex-col relative">
+            <Navbar />
+            <div className="min-h-full flex mt-[48px]">
+                <div className="sticky top-[48px] h-fit p-2 sm:p-4 border-r-2 border-gray-100">
+                    <Sidebar />
+                </div>
+                <div className={`p-2 h-full sm:p-4 flex-1`}>
+                    <Outlet />
+                </div>
             </div>
-            <Outlet />
         </div>
     )
 }

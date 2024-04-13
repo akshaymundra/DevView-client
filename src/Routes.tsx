@@ -18,6 +18,7 @@ const Routes = () => {
                 <Route path='request-interview' element={<RequestInterviewForm />} />
                 <Route path='room/:roomId' element={<Room />} />
             </Route>
+            <Route path="*" element={<h1>404 Not Found</h1>} />
         </Switch>
     )
 }
