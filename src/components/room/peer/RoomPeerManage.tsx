@@ -4,8 +4,12 @@ import Peer, { MediaConnection } from 'peerjs';
 import { useSocket } from "@/context/SocketContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { MdCallEnd } from "react-icons/md";
 import Button from "@/components/common/buttons/Button";
+import { MdCallEnd } from "react-icons/md";
+import { FaMicrophoneSlash } from "react-icons/fa6";
+import { FaMicrophone } from "react-icons/fa";
+import { FaVideo } from "react-icons/fa6";
+import { FaVideoSlash } from "react-icons/fa6";
 
 
 interface RoomPeerManageProps {
@@ -26,6 +30,10 @@ const RoomPeerManage: React.FC<RoomPeerManageProps> = ({
     const peerInstance = useRef<Peer | null>(null);
     const [currentCall, setCurrentCall] = useState<MediaConnection | null>(null);
     const navigate = useNavigate();
+
+    // user control 
+    const [isMuted, setIsMuted] = useState(false);
+    const [isVideoOff, setIsVideoOff] = useState(false);
 
 
     // set up the peer connection on component mount 
@@ -91,21 +99,6 @@ const RoomPeerManage: React.FC<RoomPeerManageProps> = ({
         });
 
         socket?.on('room:peer-disconnect', () => handleCallEnd(true));
-        // socket?.on('room:peer-disconnect', () => {
-        //     if (remoteVideoRef.current?.srcObject) {
-        //         let stream = remoteVideoRef.current.srcObject as MediaStream;
-        //         let tracks = stream.getTracks();
-        //         tracks.map(track => track.stop());
-        //         remoteVideoRef.current.srcObject = null;
-        //     }
-        //     if (currentUserVideoRef.current?.srcObject) {
-        //         let stream = currentUserVideoRef.current.srcObject as MediaStream;
-        //         let tracks = stream.getTracks();
-        //         tracks.map(track => track.stop());
-        //         currentUserVideoRef.current.srcObject = null;
-        //     }
-        //     navigate('/');
-        // })
 
     }, [socket]);
 
@@ -136,23 +129,43 @@ const RoomPeerManage: React.FC<RoomPeerManageProps> = ({
         if (currentUserVideoRef.current?.srcObject) {
             let stream = currentUserVideoRef.current.srcObject as MediaStream;
             let tracks = stream.getTracks();
-            tracks.forEach((track) => track.stop());
+            tracks.forEach((track) => track.enabled = false);
+            // tracks.forEach((track) => track.stop());
             currentUserVideoRef.current.srcObject = null;
         }
 
         if (remoteVideoRef.current?.srcObject) {
             let stream = remoteVideoRef.current.srcObject as MediaStream;
             let tracks = stream.getTracks();
-            tracks.forEach((track) => track.stop());
+            tracks.forEach((track) => track.enabled = false);
+            // tracks.forEach((track) => track.stop());
             remoteVideoRef.current.srcObject = null;
         }
         if (!onRemote) {
             socket?.emit('room:peer-disconnect', { roomId, peerId });
         }
         navigate('/');
-        window.location.reload();
     };
 
+    // handle controls 
+    // handle controls 
+    const handleVideoToggle = () => {
+        if (currentUserVideoRef.current?.srcObject) {
+            let stream = currentUserVideoRef.current.srcObject as MediaStream;
+            let videoTracks = stream.getVideoTracks();
+            videoTracks.forEach((track) => track.enabled = !track.enabled);
+            setIsVideoOff(!isVideoOff);
+        }
+    }
+
+    const handleMuteToggle = () => {
+        if (currentUserVideoRef.current?.srcObject) {
+            let stream = currentUserVideoRef.current.srcObject as MediaStream;
+            let audioTracks = stream.getAudioTracks();
+            audioTracks.forEach((track) => track.enabled = !track.enabled);
+            setIsMuted(!isMuted);
+        }
+    }
 
     return (
         <div className={`${Style.container}`}>
@@ -179,6 +192,38 @@ const RoomPeerManage: React.FC<RoomPeerManageProps> = ({
                         iconButton
                     >
                         <MdCallEnd style={{ color: "white", fontSize: '1.2rem' }} />
+                    </Button>
+                    <Button
+                        onClick={handleMuteToggle}
+                        varient="danger"
+                        roundedFull
+                        iconButton
+                    >
+                        {isMuted ?
+                            <FaMicrophoneSlash
+                                style={{ color: "white", fontSize: '1.2rem' }}
+                            />
+                            :
+                            <FaMicrophone
+                                style={{ color: "white", fontSize: '1.2rem' }}
+                            />
+                        }
+                    </Button>
+                    <Button
+                        onClick={handleVideoToggle}
+                        varient="danger"
+                        roundedFull
+                        iconButton
+                    >
+                        {isVideoOff ?
+                            <FaVideoSlash
+                                style={{ color: "white", fontSize: '1.2rem' }}
+                            />
+                            :
+                            <FaVideo
+                                style={{ color: "white", fontSize: '1.2rem' }}
+                            />
+                        }
                     </Button>
                 </div>
             </div>
